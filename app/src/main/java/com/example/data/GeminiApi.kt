@@ -71,7 +71,33 @@ data class AcademicAnalysisJson(
     @Json(name = "keyFunctions") val keyFunctions: String,
     @Json(name = "serviceConcept") val serviceConcept: String,
     @Json(name = "aiValue") val aiValue: String,
-    @Json(name = "developmentPlan") val developmentPlan: String
+    @Json(name = "developmentPlan") val developmentPlan: String,
+
+    // NEW Feature: Structured Breakdown Sections
+    @Json(name = "requiredOutput") val requiredOutput: String? = "",
+    @Json(name = "importantKeywords") val importantKeywords: String? = "",
+    @Json(name = "professorFocus") val professorFocus: String? = "",
+    @Json(name = "suggestedSteps") val suggestedSteps: String? = "",
+
+    // NEW Feature: AI Value Matrix quadrants
+    @Json(name = "matrixProductivity") val matrixProductivity: String? = "",
+    @Json(name = "matrixDecisionMaking") val matrixDecisionMaking: String? = "",
+    @Json(name = "matrixCreativity") val matrixCreativity: String? = "",
+    @Json(name = "matrixInteraction") val matrixInteraction: String? = "",
+
+    // NEW Feature: Rubric Score Checker (0-5 per metric)
+    @Json(name = "scoreProblemClarity") val scoreProblemClarity: Int? = 0,
+    @Json(name = "scoreTargetClarity") val scoreTargetClarity: Int? = 0,
+    @Json(name = "scoreServiceValue") val scoreServiceValue: Int? = 0,
+    @Json(name = "scoreAiValue") val scoreAiValue: Int? = 0,
+    @Json(name = "scoreFeasibility") val scoreFeasibility: Int? = 0,
+    @Json(name = "scorePresentation") val scorePresentation: Int? = 0,
+    @Json(name = "scoreSuggestions") val scoreSuggestions: String? = "",
+
+    // NEW Feature: Presentation Script Generator
+    @Json(name = "presentationPitch") val presentationPitch: String? = "",
+    @Json(name = "presentationScript") val presentationScript: String? = "",
+    @Json(name = "presentationQna") val presentationQna: String? = ""
 )
 
 // --- Retrofit API Interface ---

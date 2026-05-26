@@ -1,5 +1,5 @@
 {
-  "name": "Assignment Analyzer",
+  "name": "Assignment Analyzer Pro",
   "description": "An AI-based academic support agent for international university students.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
