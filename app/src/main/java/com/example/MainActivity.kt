@@ -25,6 +25,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // Capture uncaught exceptions to help diagnose any unexpected crashes during streaming execution
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            android.util.Log.e("StudyMateCrash", "FATAL UNCAUGHT EXCEPTION in thread: ${thread.name}", throwable)
+            defaultHandler?.uncaughtException(thread, throwable)
+        }
+        
         // Initialize Room Database and Repository lazily on Startup
         database = Room.databaseBuilder(
             applicationContext,

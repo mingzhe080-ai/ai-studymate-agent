@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -123,7 +124,7 @@ fun StudyMateAppScreen(
             AnimatedContent(
                 targetState = activeTab,
                 transitionSpec = {
-                    slideInHorizontally { width -> if (targetState == "history") width else -width } with
+                    slideInHorizontally { width -> if (targetState == "history") width else -width } togetherWith
                     slideOutHorizontally { width -> if (targetState == "history") -width else width }
                 },
                 label = "TabTransition"
@@ -200,18 +201,18 @@ fun AcademicTopBar() {
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Text(
-                text = "AI StudyMate Agent",
+                text = "Assignment Analyzer",
                 color = Color(0xFF005AC1), // Exactly `#005AC1`
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.5).sp
             )
             Text(
-                text = "Academic Support Agent • International",
+                text = "Requirement Analyzer for International Students",
                 color = Color(0xFF64748B), // Slate-500 (#64748B) text
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
+                letterSpacing = 0.3.sp,
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
@@ -254,7 +255,7 @@ fun WorkspaceView(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "This AI tool is crafted for international university workshops. Paste your assignment briefs, requirements, or startup project instructions below. We will build a structured Academic Strategy Report aligning with AI Management Theory.",
+                        text = "This premium analyzer is designed specifically for international university students studying in English or Korean-medium classes. Paste your assignment prompt, syllabus brief, or requirements below. We will break them down systematically and generate structural study strategies aligning with AI Management Theory core principles.",
                         fontSize = 12.sp,
                         color = Color(0xFF475569),
                         lineHeight = 17.sp
@@ -697,79 +698,76 @@ fun OutputReportView(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color(0xFFF3F4F9))
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                    .padding(vertical = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                // Section Title
                 Text(
-                    text = "Analysis Results",
-                    color = Color(0xFF334155),
+                    text = "ACADEMIC STRATEGY REPORT",
+                    color = Color(0xFF475569),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
+                    letterSpacing = 1.sp,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 )
 
-                // Grid 1: Main Task & Problem to Solve
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    GridOutputCard(
-                        title = "Main Task",
-                        content = analysis.mainTask,
-                        modifier = Modifier.weight(1.0f)
-                    )
-                    GridOutputCard(
-                        title = "Problem",
-                        content = analysis.problemToSolve,
-                        modifier = Modifier.weight(1.0f)
-                    )
-                }
+                // 1. Professor Requirement Checklist Card
+                ProfessorChecklistCard(analysis = analysis)
 
-                // Grid 2: Target Users & User Needs
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    GridOutputCard(
-                        title = "Target Users",
-                        content = analysis.targetUsers,
-                        modifier = Modifier.weight(1.0f)
-                    )
-                    GridOutputCard(
-                        title = "User Needs",
-                        content = analysis.userNeeds,
-                        modifier = Modifier.weight(1.0f)
-                    )
-                }
+                // 2. Assignment Breakdown Card
+                AssignmentBreakdownCard(rawText = analysis.mainTask)
 
-                // AI Value Proposition Container (Spacious Lavender Alert highlight)
-                PremiumTheoryCard(
-                    title = "AI Value Proposition & Theory Focus",
-                    content = analysis.aiValue
+                // 3. AI Value Matrix Card
+                AiValueMatrixCard(rawText = analysis.aiValue)
+
+                // 4. Problem card
+                AcademicDetailCard(
+                    title = "Problem to Solve & Pain Points",
+                    content = analysis.problemToSolve,
+                    icon = Icons.Default.ErrorOutline,
+                    iconColor = Color(0xFFDC2626)
                 )
 
-                // Detailed Row Lists: Service Concept, Key Functions, Development Plan
-                DetailRowCard(
-                    title = "Service Concept",
-                    content = analysis.serviceConcept,
-                    icon = Icons.Default.Layers,
-                    iconColor = Color(0xFF005AC1)
+                // 5. Target Users Card
+                AcademicDetailCard(
+                    title = "Target Student Profile Focus",
+                    content = analysis.targetUsers,
+                    icon = Icons.Default.Groups,
+                    iconColor = Color(0xFF0284C7)
                 )
 
-                DetailRowCard(
-                    title = "Key Functions",
+                // 6. User Needs Card
+                AcademicDetailCard(
+                    title = "Academic & Language Hurdles",
+                    content = analysis.userNeeds,
+                    icon = Icons.Default.Psychology,
+                    iconColor = Color(0xFFD97706)
+                )
+
+                // 7. Key Functions Card
+                AcademicDetailCard(
+                    title = "Proposed System / App Key Functions",
                     content = analysis.keyFunctions,
                     icon = Icons.Default.Build,
                     iconColor = Color(0xFF0F766E)
                 )
 
-                DetailRowCard(
-                    title = "Development Plan",
+                // 8. Service Value Card
+                AcademicDetailCard(
+                    title = "Service Value & Conceptual Framework",
+                    content = analysis.serviceConcept,
+                    icon = Icons.Default.Star,
+                    iconColor = Color(0xFF7C3AED),
+                    borderColor = Color(0xFFDDD6FE),
+                    backgroundColor = Color(0xFFFAF5FF)
+                )
+
+                // 9. Development Plan Card
+                AcademicDetailCard(
+                    title = "Development Timeline & Milestone Plan",
                     content = analysis.developmentPlan,
                     icon = Icons.Default.Timeline,
-                    iconColor = Color(0xFF7C3AED)
+                    iconColor = Color(0xFF2563EB)
                 )
             }
         }
@@ -780,135 +778,423 @@ fun OutputReportView(
     }
 }
 
+// --- Parse Helpers for Assignment Breakdown and AI Value Matrix ---
+
+fun parseAssignmentBreakdown(rawText: String): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    val lines = rawText.split("\n")
+    var currentKey = "Main Task"
+    val sb = StringBuilder()
+    
+    val keys = listOf("Main Task", "Required Output", "Important Keywords", "What the Professor Cares About", "Suggested Next Steps")
+    
+    for (line in lines) {
+        val trimmed = line.trim()
+        var foundKey = false
+        for (key in keys) {
+            val pattern1 = "$key:"
+            val pattern2 = "- $key:"
+            val pattern3 = "**$key**:"
+            val pattern4 = "**$key:**"
+            if (trimmed.startsWith(pattern1, ignoreCase = true) || 
+                trimmed.startsWith(pattern2, ignoreCase = true) || 
+                trimmed.startsWith(pattern3, ignoreCase = true) || 
+                trimmed.startsWith(pattern4, ignoreCase = true)) {
+                if (sb.isNotEmpty()) {
+                    map[currentKey] = sb.toString().trim()
+                    sb.clear()
+                }
+                currentKey = key
+                val idx = trimmed.indexOf(":")
+                val content = if (idx != -1) trimmed.substring(idx + 1).trim() else ""
+                sb.append(content)
+                foundKey = true
+                break
+            }
+        }
+        if (!foundKey) {
+            if (sb.isNotEmpty()) sb.append("\n")
+            sb.append(trimmed)
+        }
+    }
+    if (sb.isNotEmpty()) {
+        map[currentKey] = sb.toString().trim()
+    }
+    return map
+}
+
+fun parseValueMatrix(rawText: String): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    val lines = rawText.split("\n")
+    var currentKey = "Productivity"
+    val sb = StringBuilder()
+    
+    val keys = listOf("Productivity", "Decision-making", "Creativity", "Interaction")
+    
+    for (line in lines) {
+        val trimmed = line.trim()
+        var foundKey = false
+        for (key in keys) {
+            val pattern1 = "$key:"
+            val pattern2 = "- $key:"
+            val pattern3 = "**$key**:"
+            val pattern4 = "**$key:**"
+            if (trimmed.startsWith(pattern1, ignoreCase = true) || 
+                trimmed.startsWith(pattern2, ignoreCase = true) || 
+                trimmed.startsWith(pattern3, ignoreCase = true) || 
+                trimmed.startsWith(pattern4, ignoreCase = true)) {
+                if (sb.isNotEmpty()) {
+                    map[currentKey] = sb.toString().trim()
+                    sb.clear()
+                }
+                currentKey = key
+                val idx = trimmed.indexOf(":")
+                val content = if (idx != -1) trimmed.substring(idx + 1).trim() else ""
+                sb.append(content)
+                foundKey = true
+                break
+            }
+        }
+        if (!foundKey) {
+            if (sb.isNotEmpty()) sb.append("\n")
+            sb.append(trimmed)
+        }
+    }
+    if (sb.isNotEmpty()) {
+        map[currentKey] = sb.toString().trim()
+    }
+    return map
+}
+
+// --- Custom Presentation Cards ---
+
 @Composable
-fun GridOutputCard(
-    title: String,
-    content: String,
-    modifier: Modifier = Modifier
-) {
+fun ProfessorChecklistCard(analysis: StudyAnalysis) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
-        modifier = modifier
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0FDF4)), // Beautiful Light Mint 
+        border = BorderStroke(1.5.dp, Color(0xFF15803D)),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FactCheck,
+                    contentDescription = null,
+                    tint = Color(0xFF166534),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "Professor's Requirement Checklist",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF166534),
+                    letterSpacing = (-0.3).sp
+                )
+            }
             Text(
-                text = title.uppercase(Locale.ROOT),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF005AC1),
-                letterSpacing = 0.5.sp
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = content,
+                text = "These points fulfill critical criteria for an AI Management Theory Class project focused on international university challenges:",
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFF1E293B),
-                lineHeight = 15.sp,
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis
+                color = Color(0xFF15803D),
+                lineHeight = 15.sp
+            )
+            
+            HorizontalDivider(color = Color(0xFFDCFCE7), thickness = 1.dp)
+
+            ChecklistItemBox(
+                badge = "Problem Solved",
+                question = "What problem does the AI agent/service solve?",
+                answer = analysis.problemToSolve
+            )
+            ChecklistItemBox(
+                badge = "Target Users",
+                question = "Who are the target international students?",
+                answer = analysis.targetUsers
+            )
+            ChecklistItemBox(
+                badge = "Service Value",
+                question = "What primary value or experience does the service provide?",
+                answer = analysis.serviceConcept
+            )
+            ChecklistItemBox(
+                badge = "AI Capability Matrix",
+                question = "How does AI improve decision-making, productivity, creativity, and interaction?",
+                answer = "Addressed fully via the four distinct quadrants of the AI Value Matrix (Productivity, Decision-Making, Creativity, Interaction) to help students excel."
             )
         }
     }
 }
 
 @Composable
-fun PremiumTheoryCard(
-    title: String,
-    content: String
-) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE8DEF8)), // Lavender tonal container
-        border = BorderStroke(1.dp, Color(0xFFD0BCFF)),
-        modifier = Modifier.fillMaxWidth()
+fun ChecklistItemBox(badge: String, question: String, answer: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.Top
     ) {
-        Column(
-            modifier = Modifier.padding(14.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Lightbulb,
-                    contentDescription = null,
-                    tint = Color(0xFF21005D),
-                    modifier = Modifier.size(16.dp)
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = "Fulfills requirements",
+            tint = Color(0xFF16A34A),
+            modifier = Modifier
+                .size(16.dp)
+                .padding(top = 2.dp)
+        )
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = badge,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .background(Color(0xFF16A34A), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = title.uppercase(Locale.ROOT),
-                    fontSize = 10.sp,
+                    text = question,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF21005D),
-                    letterSpacing = 0.5.sp
+                    color = Color(0xFF166534)
                 )
             }
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = content,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFF21005D),
-                lineHeight = 16.sp
+                text = answer.take(130) + if (answer.length > 130) "..." else "",
+                fontSize = 11.sp,
+                color = Color(0xFF166534),
+                lineHeight = 14.sp
             )
         }
     }
 }
 
 @Composable
-fun DetailRowCard(
-    title: String,
-    content: String,
-    icon: ImageVector,
-    iconColor: Color
-) {
+fun AssignmentBreakdownCard(rawText: String) {
+    val parsed = remember(rawText) { parseAssignmentBreakdown(rawText) }
+    
     Card(
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f)),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White),
-                contentAlignment = Alignment.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = icon,
+                    imageVector = Icons.Default.Assignment,
                     contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(18.dp)
+                    tint = Color(0xFF005AC1),
+                    modifier = Modifier.size(20.dp)
                 )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
                 Text(
-                    text = title.uppercase(Locale.ROOT),
-                    fontSize = 9.sp,
+                    text = "Assignment Breakdown Plan",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF64748B),
-                    letterSpacing = 0.5.sp
-                )
-                Text(
-                    text = content,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1E293B),
-                    lineHeight = 14.sp
+                    color = Color(0xFF1E293B)
                 )
             }
+            
+            HorizontalDivider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+
+            val items = listOf(
+                Triple("Main Task", parsed["Main Task"] ?: parsed.values.firstOrNull() ?: rawText, Color(0xFF1E3A8A)),
+                Triple("Required Output", parsed["Required Output"] ?: "Analyze according to syllabus and specified structures.", Color(0xFF0F766E)),
+                Triple("Important Keywords", parsed["Important Keywords"] ?: "AI, Management Theory, Assignment Metrics", Color(0xFFB45309)),
+                Triple("What the Professor Cares About", parsed["What the Professor Cares About"] ?: "Strong logical ties, clear target audience, and academic rigor.", Color(0xFF7C3AED)),
+                Triple("Suggested Next Steps", parsed["Suggested Next Steps"] ?: "1. Deconstruct instructions\n2. Outline core components\n3. Proofread drafts", Color(0xFF0369A1))
+            )
+
+            items.forEach { (label, content, iconColor) ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF8FAFC), RoundedCornerShape(8.dp))
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = label.uppercase(Locale.ROOT),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = iconColor,
+                        letterSpacing = 0.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = content,
+                        fontSize = 11.sp,
+                        color = Color(0xFF334155),
+                        lineHeight = 15.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AiValueMatrixCard(rawText: String) {
+    val parsed = remember(rawText) { parseValueMatrix(rawText) }
+    
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF6FF)), // Light blue workspace color
+        border = BorderStroke(1.5.dp, Color(0xFF3B82F6)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(11.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = Color(0xFF1D4ED8),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "AI Value Matrix",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1D4ED8)
+                )
+            }
+            Text(
+                text = "Four-dimensional analysis of how AI improves student outcomes aligned with AI Management Theory:",
+                fontSize = 11.sp,
+                color = Color(0xFF1D4ED8),
+                lineHeight = 14.sp
+            )
+            
+            HorizontalDivider(color = Color(0xFFDBEAFE), thickness = 1.dp)
+
+            // 4 Quadrants
+            val quadrants = listOf(
+                Triple("Productivity", parsed["Productivity"] ?: "Accelerates analysis of core materials and automates early draft structures.", Color(0xFF2563EB)),
+                Triple("Decision-making", parsed["Decision-making"] ?: "Highlights critical parameters from syllabus to prevent logical scope drift.", Color(0xFF059669)),
+                Triple("Creativity", parsed["Creativity"] ?: "Proposes alternative perspectives, unique case study links, and conceptual frameworks.", Color(0xFFD97706)),
+                Triple("Interaction", parsed["Interaction"] ?: "Refines tone transitions, translates specialized texts, and supports presentation layouts.", Color(0xFF7C3AED))
+            )
+
+            quadrants.forEach { (title, description, color) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(BorderStroke(1.dp, Color(0xFFE2E8F0)), RoundedCornerShape(12.dp))
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(color.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val icon = when (title) {
+                            "Productivity" -> Icons.Default.CheckCircle
+                            "Decision-making" -> Icons.Default.List
+                            "Creativity" -> Icons.Default.Lightbulb
+                            else -> Icons.Default.Language
+                        }
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = color,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                    Column {
+                        Text(
+                            text = title,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = color
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = description,
+                            fontSize = 11.sp,
+                            color = Color(0xFF334155),
+                            lineHeight = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AcademicDetailCard(
+    title: String,
+    content: String,
+    icon: ImageVector,
+    iconColor: Color,
+    borderColor: Color = Color(0xFFE2E8F0),
+    backgroundColor: Color = Color.White
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        border = BorderStroke(1.dp, borderColor),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(iconColor.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+                Text(
+                    text = title,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E293B)
+                )
+            }
+            
+            Text(
+                text = content,
+                fontSize = 11.7.sp,
+                color = Color(0xFF334155),
+                lineHeight = 16.sp
+            )
         }
     }
 }

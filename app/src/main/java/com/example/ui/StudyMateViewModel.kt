@@ -66,17 +66,27 @@ class StudyMateViewModel(private val repository: StudyAnalysisRepository) : View
 
     fun deleteAnalysis(analysis: StudyAnalysis) {
         viewModelScope.launch {
-            repository.deleteById(analysis.id)
-            if (currentAnalysis.value?.id == analysis.id) {
-                currentAnalysis.value = null
+            try {
+                repository.deleteById(analysis.id)
+                if (currentAnalysis.value?.id == analysis.id) {
+                    currentAnalysis.value = null
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                error.value = "Failed to delete log: ${e.localizedMessage ?: e.message}"
             }
         }
     }
 
     fun clearAllAnalyses() {
         viewModelScope.launch {
-            repository.deleteAll()
-            currentAnalysis.value = null
+            try {
+                repository.deleteAll()
+                currentAnalysis.value = null
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                error.value = "Failed to clear history log: ${e.localizedMessage ?: e.message}"
+            }
         }
     }
 
@@ -109,7 +119,7 @@ class StudyMateViewModel(private val repository: StudyAnalysisRepository) : View
 
                 // Detailed prompting strategy to secure strict JSON output structure
                 val promptText = """
-                    You are Analyzing Academic Requirements for a student.
+                    You are Analyzing Academic Requirements for an AI StudyMate Agent, a service focusing on "Assignment Requirement Analyzer for International Students".
                     Mode Selected: $modeTitle ($modeDesc)
                     Target Language of Output: $lang
                     
@@ -119,20 +129,37 @@ class StudyMateViewModel(private val repository: StudyAnalysisRepository) : View
                     --------------------------------------------------
                     
                     Analyze this input deeply and generate a structured academic response.
-                    Your analytical output MUST follow the terms of AI Management Theory and Academic Development workflows.
+                    All analysis and output MUST focus strictly on international university students who study in English-medium or Korean-medium classes. Highlight their specific needs, language challenges, and study workflows.
+                    
                     You MUST return your response as a JSON object, written ENTIRELY in $lang.
                     
                     The JSON object MUST have exactly these 8 keys:
-                    1. "mainTask": Clear summary of the primary academic expectation/assignment core task.
-                    2. "problemToSolve": What workflow, educational or expression problem this solves, incorporating AI Management Theory perspective.
-                    3. "targetUsers": Who is writing/studying (e.g., international students, target user definitions).
-                    4. "userNeeds": Core needs, language hurdles, structural guidelines, or conceptual gaps that must be bridged for this user profile.
-                    5. "keyFunctions": Functional blocks or study steps to carry out the assignment systematically.
-                    6. "serviceConcept": Ideal AI Agent conceptual framework or service blueprint to carry out this assignment successfully.
-                    7. "aiValue": Academic and professional explanation of how AI improves decision-making, productivity, creativity, and interaction in this context (AI Management Theory Class Workshop focus).
-                    8. "developmentPlan": A practical, structured milestone project execution plan to research, write, and review the final deliverable.
+                    1. "mainTask": A structured Assignment Breakdown written exactly with these headers:
+                       Main Task: [Detailed description of the primary academic core task]
+                       Required Output: [Specific deliverables, formats, word count, length, etc.]
+                       Important Keywords: [Key terms or concepts extracted from the prompt]
+                       What the Professor Cares About: [Grading metrics, main assessment criteria, or focus areas]
+                       Suggested Next Steps: [Detailed bullet points on immediate tactical next steps]
+                       
+                    2. "problemToSolve": What workflow or academic problem this AI agent idea/service solves, incorporating linguistic barriers, study anxiety, and AI Management Theory perspective.
                     
-                    Make sure each section contains detailed paragraphs or bullet points written inside the String value of that JSON key. DO NOT provide empty values. Return raw JSON text without surrounding markdown fences.
+                    3. "targetUsers": Define the specific target student profile (international students studying in English or Korean-medium classes, highlighting their cultural and educational background).
+                    
+                    4. "userNeeds": Core academic and language needs, lecture/materials comprehension gaps, or reference search struggles of these students.
+                    
+                    5. "keyFunctions": Systematic functional blocks or concrete study features needed to address those needs.
+                    
+                    6. "serviceConcept": Explain the overall "Service Value" proposition, what experience/outcome it provides, and how it acts as an intelligent partner.
+                    
+                    7. "aiValue": An AI Value Matrix structured exactly with these headers:
+                       Productivity: [Detailed explanation of how AI improves study productivity, reading speed, or formatting efficiency]
+                       Decision-making: [Detailed explanation of how AI supports evaluation of ideas, logic checkers, or reference relevance judgment]
+                       Creativity: [Detailed explanation of how AI helps brainstorm novel angles, structure arguments, or write expressive drafts]
+                       Interaction: [Detailed explanation of how AI aids language polishing, terminology translation, speech rehearsal, or interactive feedback]
+                       
+                    8. "developmentPlan": A practical, structured milestone project compilation plan detailing research, draft generation, and final review check steps.
+                    
+                    Make sure each section is very detailed and uses bullet points formatting to be highly readable. DO NOT return empty keys. Return RAW JSON text without markdown formatting blocks.
                 """.trimIndent()
 
                 val systemPrompt = "You are 'AI StudyMate Agent', a highly professional academic support agent assisting international university students. Return your responses in valid JSON format only."
@@ -182,7 +209,7 @@ class StudyMateViewModel(private val repository: StudyAnalysisRepository) : View
                 } else {
                     error.value = "Received an empty response from Gemini. Please try again."
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 e.printStackTrace()
                 error.value = "Failed to connect to StudyMate service: ${e.localizedMessage ?: e.message}"
             } finally {
